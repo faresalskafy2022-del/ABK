@@ -1,0 +1,21 @@
+name: Build ABK Apps
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'ABK-Android/**'
+      - '.github/workflows/build.yml'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Extract project ZIP
+        run: |
+          unzip -o ABK-Android-ready-to-upload.zip -d .
+
+      - name: Show project files
+        run: find . -maxdepth 4 -type f | head -200
