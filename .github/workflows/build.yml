@@ -1,11 +1,9 @@
-name: Build ABK Apps
+name: Build four ABK APKs
 
 on:
   workflow_dispatch:
   push:
-    paths:
-      - 'ABK-Android/**'
-      - '.github/workflows/build.yml'
+    branches: ["main"]
 
 jobs:
   build:
@@ -13,9 +11,23 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Extract project ZIP
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.9'
+
+      - name: Unpack project
         run: |
           unzip -o ABK-Android-ready-to-upload.zip -d .
 
-      - name: Show project files
-        run: find . -maxdepth 4 -type f | head -200
+      - name: Build four APKs
+        run: gradle assembleDebug
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ABK-four-debug-apks
+          path: '**/build/outputs/apk/debug/*.apk'
